@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import {
   QrCode,
@@ -13,8 +13,8 @@ import {
   Mail,
   Send,
   Sparkles,
-  ShieldCheck,
-  RefreshCw,
+  ExternalLink,
+  Laptop,
 } from 'lucide-react';
 
 interface ShareFeedbackModalProps {
@@ -25,15 +25,14 @@ interface ShareFeedbackModalProps {
 export const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ onClose, onToast }) => {
   const [copied, setCopied] = useState<boolean>(false);
   const [copiedTemplate, setCopiedTemplate] = useState<boolean>(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [qrDataUrl, setQrDataUrl] = useState<string>('');
 
   const [tunnelType, setTunnelType] = useState<'public' | 'wifi' | 'custom'>('public');
-  const [publicBaseUrl, setPublicBaseUrl] = useState<string>('https://86c9f3996aaa74.lhr.life');
+  const [publicBaseUrl, setPublicBaseUrl] = useState<string>('https://3a7f87cd18add1.lhr.life');
   const [wifiBaseUrl, setWifiBaseUrl] = useState<string>('http://172.20.35.121:5173');
   const [customInput, setCustomInput] = useState<string>('');
-  const [loadingInfo, setLoadingInfo] = useState<boolean>(true);
 
-  // Fetch tunnel info from server
+  // Fetch live active tunnel info from server
   useEffect(() => {
     fetch('/api/tunnel-info')
       .then((res) => res.json())
@@ -41,8 +40,7 @@ export const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ onClose,
         if (data.publicUrl) setPublicBaseUrl(data.publicUrl);
         if (data.wifiUrl) setWifiBaseUrl(data.wifiUrl);
       })
-      .catch((err) => console.error('Error fetching tunnel info:', err))
-      .finally(() => setLoadingInfo(false));
+      .catch((err) => console.error('Error fetching tunnel info:', err));
   }, []);
 
   // Compute final active URL
@@ -51,31 +49,25 @@ export const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ onClose,
     if (tunnelType === 'wifi') base = wifiBaseUrl;
     else if (tunnelType === 'custom') base = customInput || publicBaseUrl;
 
-    // Ensure trailing slash or query param
-    const cleanBase = base.replace(/\/+$/, '');
+    const cleanBase = (base || '').trim().replace(/\/+$/, '');
     return `${cleanBase}/?view=feedback`;
   };
 
   const activeUrl = getActiveUrl();
 
+  // Generate robust base64 image data URL for QR Code
   useEffect(() => {
-    // Generate QR Code on canvas whenever activeUrl changes
-    if (canvasRef.current && activeUrl) {
-      QRCode.toCanvas(
-        canvasRef.current,
-        activeUrl,
-        {
-          width: 230,
-          margin: 2,
-          color: {
-            dark: '#0f172a', // slate-900
-            light: '#ffffff',
-          },
+    if (activeUrl) {
+      QRCode.toDataURL(activeUrl, {
+        width: 260,
+        margin: 2,
+        color: {
+          dark: '#020617', // slate-950
+          light: '#ffffff',
         },
-        (error) => {
-          if (error) console.error('Error rendering QR code:', error);
-        }
-      );
+      })
+        .then((url) => setQrDataUrl(url))
+        .catch((err) => console.error('QR generation error:', err));
     }
   }, [activeUrl]);
 
@@ -87,10 +79,9 @@ export const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ onClose,
   };
 
   const handleDownloadQr = () => {
-    if (!canvasRef.current) return;
-    const url = canvasRef.current.toDataURL('image/png');
+    if (!qrDataUrl) return;
     const a = document.createElement('a');
-    a.href = url;
+    a.href = qrDataUrl;
     a.download = 'fitpulse-participant-qr.png';
     a.click();
     onToast('QR Code saved as PNG image!');
@@ -162,7 +153,7 @@ export const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ onClose,
             }`}
           >
             <Globe className="w-3.5 h-3.5 text-pink-400" />
-            <span>Public HTTPS (4G/5G / Any Mobile)</span>
+            <span>Public HTTPS (Any Mobile / 4G / 5G)</span>
           </button>
 
           <button
@@ -181,9 +172,20 @@ export const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ onClose,
 
         {/* QR Code & Mobile Instructions Card */}
         <div className="flex flex-col sm:flex-row items-center gap-6 p-5 rounded-2xl bg-slate-950 border border-slate-800">
-          <div className="p-3 bg-white rounded-2xl shadow-2xl flex flex-col items-center shrink-0">
-            <canvas ref={canvasRef} className="rounded-xl w-[190px] h-[190px]" />
-            <span className="text-[10px] font-extrabold text-slate-800 mt-1 uppercase tracking-wider">
+          {/* QR Code Image Container */}
+          <div className="p-3.5 bg-white rounded-2xl shadow-2xl flex flex-col items-center shrink-0">
+            {qrDataUrl ? (
+              <img
+                src={qrDataUrl}
+                alt="Participant Mobile QR Code"
+                className="w-[190px] h-[190px] object-contain rounded-lg block"
+              />
+            ) : (
+              <div className="w-[190px] h-[190px] flex items-center justify-center text-xs text-slate-600">
+                Generating QR...
+              </div>
+            )}
+            <span className="text-[10px] font-extrabold text-slate-800 mt-2 uppercase tracking-wider">
               Scan with Any Phone Camera
             </span>
           </div>
@@ -196,24 +198,40 @@ export const ShareFeedbackModal: React.FC<ShareFeedbackModalProps> = ({ onClose,
             <p className="text-slate-300 leading-relaxed">
               {tunnelType === 'public' ? (
                 <>
-                  This QR code uses the secure public HTTPS endpoint (<strong>{publicBaseUrl}</strong>).
-                  Participants can scan it using <strong>cellular data (4G/5G) or any Wi-Fi</strong> without being blocked by network firewalls.
+                  This QR code uses the live public HTTPS endpoint:
+                  <br />
+                  <strong className="text-pink-300 font-mono text-[11px] break-all">{publicBaseUrl}</strong>
+                  <br />
+                  <span className="text-slate-400 text-[11px] block mt-1">
+                    Participants can scan it using <strong>cellular data (4G/5G) or any Wi-Fi</strong> without being blocked by network firewalls.
+                  </span>
                 </>
               ) : (
                 <>
-                  Connects via local LAN (<strong>{wifiBaseUrl}</strong>). Both the host laptop and mobile phone must be connected to the exact same Wi-Fi.
+                  Connects via local LAN (<strong>{wifiBaseUrl}</strong>). Both your laptop and mobile phone must be on the exact same Wi-Fi network.
                 </>
               )}
             </p>
-            <div className="flex items-center space-x-2 pt-1">
+
+            <div className="flex flex-wrap items-center gap-2 pt-1">
               <button
                 type="button"
                 onClick={handleDownloadQr}
                 className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold transition-colors"
               >
                 <Download className="w-3.5 h-3.5 text-pink-400" />
-                <span>Save QR as PNG</span>
+                <span>Save QR PNG</span>
               </button>
+
+              <a
+                href={activeUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-pink-600/20 hover:bg-pink-600/30 border border-pink-500/40 text-pink-300 text-xs font-semibold transition-colors"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Test in New Tab</span>
+              </a>
             </div>
           </div>
         </div>
