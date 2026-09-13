@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Sparkles,
   BarChart3,
@@ -7,15 +7,24 @@ import {
   RotateCcw,
   Download,
   QrCode,
-  Share2,
+  Camera,
+  LogIn,
+  LogOut,
+  User,
+  ChevronDown,
+  Shield,
+  Briefcase,
+  CheckCircle,
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface NavbarProps {
-  activeView: 'landing' | 'feedback' | 'dashboard' | 'presentation';
-  onNavigate: (view: 'landing' | 'feedback' | 'dashboard' | 'presentation') => void;
+  activeView: 'landing' | 'feedback' | 'dashboard' | 'presentation' | 'participant' | 'admin' | 'admin_qr' | 'scanner';
+  onNavigate: (view: any) => void;
   onResetDemo: () => void;
   onExport: () => void;
   onOpenShareModal: () => void;
+  onOpenAuthModal: () => void;
   isResetting?: boolean;
 }
 
@@ -25,8 +34,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   onResetDemo,
   onExport,
   onOpenShareModal,
+  onOpenAuthModal,
   isResetting,
 }) => {
+  const { user, isAuthenticated, logout } = useAuth();
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState<boolean>(false);
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -66,28 +79,54 @@ export const Navbar: React.FC<NavbarProps> = ({
             Overview
           </button>
 
+          {/* AI Size Scanner Highlighted Button */}
           <button
-            onClick={() => onNavigate('feedback')}
+            onClick={() => onNavigate('scanner')}
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm ${
+              activeView === 'scanner'
+                ? 'bg-gradient-to-r from-pink-500 to-indigo-600 text-white shadow-pink-500/30'
+                : 'bg-pink-950/40 text-pink-300 border border-pink-500/40 hover:bg-pink-900/40'
+            }`}
+          >
+            <Camera className="w-3.5 h-3.5 text-pink-400 animate-pulse" />
+            <span>AI Size Scanner</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('participant')}
             className={`flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-              activeView === 'feedback'
-                ? 'bg-pink-600/20 border border-pink-500/50 text-pink-300 shadow-sm'
-                : 'text-slate-400 hover:text-pink-300 hover:bg-slate-900'
+              activeView === 'participant'
+                ? 'bg-slate-800 text-white shadow-sm'
+                : 'text-slate-400 hover:text-white hover:bg-slate-900'
             }`}
           >
             <UserCheck className="w-3.5 h-3.5" />
-            <span>Customer Flow</span>
+            <span>Participant Flow</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('admin')}
+            className={`flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all ${
+              activeView === 'admin' || activeView === 'admin_qr'
+                ? 'bg-indigo-600/20 border border-indigo-500/50 text-indigo-300 shadow-sm'
+                : 'text-slate-400 hover:text-indigo-300 hover:bg-slate-900'
+            }`}
+          >
+            <QrCode className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Admin QR Hub</span>
           </button>
 
           <button
             onClick={() => onNavigate('dashboard')}
             className={`flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all ${
               activeView === 'dashboard'
-                ? 'bg-indigo-600/20 border border-indigo-500/50 text-indigo-300 shadow-sm'
-                : 'text-slate-400 hover:text-indigo-300 hover:bg-slate-900'
+                ? 'bg-slate-800 text-white shadow-sm border border-slate-700'
+                : 'text-slate-400 hover:text-white hover:bg-slate-900'
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5" />
-            <span>Brand Dashboard</span>
+            <span className="hidden md:inline">Brand Heatmap</span>
+            <span className="md:hidden">Dashboard</span>
           </button>
 
           <button
@@ -104,7 +143,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </nav>
 
-        {/* Participant Share & Demo Controls */}
+        {/* Right Controls & Auth Profile */}
         <div className="flex items-center space-x-2 shrink-0">
           {/* Highlighted Participant Share Button */}
           <button
@@ -117,26 +156,135 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="sm:hidden">Share QR</span>
           </button>
 
+          {/* Export */}
+          <button
+            onClick={onExport}
+            title="Export Insights & CSV"
+            className="hidden xl:flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-700 transition-colors"
+          >
+            <Download className="w-3 h-3 text-pink-400" />
+            <span>Export</span>
+          </button>
+
           {/* Reset Demo */}
           <button
             onClick={onResetDemo}
             disabled={isResetting}
             title="Reset to 175 realistic sample records"
-            className="hidden lg:flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-slate-800 transition-colors"
+            className="hidden xl:flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-slate-800 transition-colors"
           >
             <RotateCcw className={`w-3 h-3 ${isResetting ? 'animate-spin text-pink-400' : ''}`} />
-            <span>{isResetting ? 'Resetting...' : 'Reset Demo'}</span>
           </button>
 
-          {/* Export */}
-          <button
-            onClick={onExport}
-            title="Export Insights & CSV"
-            className="hidden lg:flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-700 transition-colors"
-          >
-            <Download className="w-3 h-3 text-pink-400" />
-            <span>Export</span>
-          </button>
+          {/* ================= AUTHENTICATION CONTROL ================= */}
+          {!isAuthenticated ? (
+            <button
+              onClick={onOpenAuthModal}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white text-xs font-bold shadow-md shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Sign In</span>
+            </button>
+          ) : (
+            <div className="relative">
+              <button
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="flex items-center space-x-2 p-1.5 pl-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all text-xs text-left"
+              >
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-pink-500 to-indigo-600 flex items-center justify-center font-black text-white text-[11px] shadow-sm">
+                  {user?.name?.slice(0, 2).toUpperCase() || 'FP'}
+                </div>
+
+                <div className="hidden sm:block">
+                  <div className="font-bold text-white leading-tight truncate max-w-[100px]">
+                    {user?.name}
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <span
+                      className={`text-[9px] font-black uppercase px-1 rounded ${
+                        user?.role === 'admin'
+                          ? 'bg-purple-500/20 text-purple-300'
+                          : user?.role === 'designer'
+                          ? 'bg-indigo-500/20 text-indigo-300'
+                          : 'bg-emerald-500/20 text-emerald-300'
+                      }`}
+                    >
+                      {user?.role}
+                    </span>
+                  </div>
+                </div>
+
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </button>
+
+              {/* Profile Dropdown */}
+              {profileDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-3 space-y-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800/80 space-y-0.5">
+                    <div className="font-bold text-white text-xs">{user?.name}</div>
+                    <div className="text-[11px] text-slate-400 truncate">{user?.email}</div>
+                    <div className="pt-1 flex items-center space-x-1 text-[10px] text-emerald-400 font-semibold">
+                      <CheckCircle className="w-3 h-3" />
+                      <span>Authenticated Session</span>
+                    </div>
+                  </div>
+
+                  {/* Role Specific Shortcuts */}
+                  <div className="space-y-1 text-xs">
+                    <button
+                      onClick={() => {
+                        onNavigate('scanner');
+                        setProfileDropdownOpen(false);
+                      }}
+                      className="w-full p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white flex items-center space-x-2 text-left"
+                    >
+                      <Camera className="w-3.5 h-3.5 text-pink-400" />
+                      <span>Launch AI Body Scanner</span>
+                    </button>
+
+                    {user?.role === 'designer' && (
+                      <button
+                        onClick={() => {
+                          onNavigate('dashboard');
+                          setProfileDropdownOpen(false);
+                        }}
+                        className="w-full p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white flex items-center space-x-2 text-left"
+                      >
+                        <BarChart3 className="w-3.5 h-3.5 text-indigo-400" />
+                        <span>Designer Action Center</span>
+                      </button>
+                    )}
+
+                    {user?.role === 'admin' && (
+                      <button
+                        onClick={() => {
+                          onNavigate('admin');
+                          setProfileDropdownOpen(false);
+                        }}
+                        className="w-full p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white flex items-center space-x-2 text-left"
+                      >
+                        <Shield className="w-3.5 h-3.5 text-purple-400" />
+                        <span>Admin QR Projector</span>
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="border-t border-slate-800 pt-2">
+                    <button
+                      onClick={() => {
+                        logout();
+                        setProfileDropdownOpen(false);
+                      }}
+                      className="w-full p-2 rounded-lg hover:bg-red-500/10 text-red-400 hover:text-red-300 flex items-center space-x-2 text-left text-xs font-bold transition-colors"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </header>

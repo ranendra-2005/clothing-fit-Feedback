@@ -5,11 +5,18 @@ import fs from 'fs';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
-import { db } from './db';
+import { db, sessionDb, participantDb, analysisDb, participantFeedbackDb } from './db';
 import { analyzeFeedback } from './nlpEngine';
 import { computeAnalytics, computeSizeSpecificAnalysis, computeHeatmap } from './analyticsEngine';
 import { generateRecommendations, generateDesignerActionPlan } from './recommendationEngine';
-import { Feedback, FilterParams } from './types';
+import {
+  validateImageQuality,
+  estimateBodyProportions,
+  recommendSize,
+  computeRecommendationAccuracy,
+  generateBrandInsightsFromData,
+} from './services/fitAnalysisService';
+import { Feedback, FilterParams, Size, GarmentType, FitPreference, SessionStatus } from './types';
 
 dotenv.config();
 
@@ -88,6 +95,507 @@ app.post('/api/tunnel-info', (req: Request, res: Response) => {
       return res.json({ success: true, message: 'Tunnel URL updated', url: url.trim() });
     }
     res.status(400).json({ success: false, error: 'Invalid URL provided' });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// --- AUTHENTICATION & USER APIS ---
+
+const usersFile = path.join(__dirname, 'data', 'users.json');
+
+function getUsers(): any[] {
+  try {
+    if (fs.existsSync(usersFile)) {
+      return JSON.parse(fs.readFileSync(usersFile, 'utf-8'));
+    }
+  } catch (err) {
+    console.error('Error reading users.json:', err);
+  }
+  return [];
+}
+
+function saveUsers(users: any[]): void {
+  try {
+    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Error saving users.json:', err);
+  }
+}
+
+// Register
+app.post('/api/auth/register', (req: Request, res: Response) => {
+  try {
+    const { name, email, password, role, brand } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, error: 'Name, email, and password are required' });
+    }
+
+    const users = getUsers();
+    const existing = users.find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
+    if (existing) {
+      return res.status(409).json({ success: false, error: 'An account with this email already exists' });
+    }
+
+    const newUser = {
+      id: `usr-${Date.now()}`,
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      password, // In real production we would bcrypt.hash
+      role: role === 'designer' || role === 'admin' ? role : 'shopper',
+      brand: brand || (role === 'designer' ? 'Apex Wear' : undefined),
+      avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name.trim())}`,
+      createdAt: new Date().toISOString(),
+    };
+
+    users.push(newUser);
+    saveUsers(users);
+
+    const { password: _, ...userProfile } = newUser;
+    const token = `token-${newUser.id}-${Date.now()}`;
+
+    res.status(201).json({
+      success: true,
+      data: { user: userProfile, token },
+      message: 'Account registered successfully',
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Login
+app.post('/api/auth/login', (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: 'Email and password are required' });
+    }
+
+    const users = getUsers();
+    const user = users.find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
+    if (!user || user.password !== password) {
+      return res.status(401).json({ success: false, error: 'Invalid email or password' });
+    }
+
+    const { password: _, ...userProfile } = user;
+    const token = `token-${user.id}-${Date.now()}`;
+
+    res.json({
+      success: true,
+      data: { user: userProfile, token },
+      message: 'Logged in successfully',
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 1-Click Demo Login for Hackathon Judges
+app.post('/api/auth/demo-login', (req: Request, res: Response) => {
+  try {
+    const { role } = req.body; // 'shopper' | 'designer' | 'admin'
+    const users = getUsers();
+
+    let targetEmail = 'sarah.designer@fitpulse.ai';
+    if (role === 'shopper') targetEmail = 'alex.shopper@fitpulse.ai';
+    if (role === 'admin') targetEmail = 'admin@fitpulse.ai';
+
+    let user = users.find((u) => u.email.toLowerCase() === targetEmail);
+    if (!user) {
+      user = users.find((u) => u.role === role) || users[0];
+    }
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'Demo user not found' });
+    }
+
+    const { password: _, ...userProfile } = user;
+    const token = `token-${user.id}-${Date.now()}`;
+
+    res.json({
+      success: true,
+      data: { user: userProfile, token },
+      message: `Signed in as ${user.name} (${user.role})`,
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Current User Profile
+app.get('/api/auth/me', (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ success: false, error: 'No authorization token provided' });
+    }
+
+    const token = authHeader.replace('Bearer ', '').trim();
+    const parts = token.split('-');
+    if (parts.length < 3 || parts[0] !== 'token') {
+      return res.status(401).json({ success: false, error: 'Invalid token' });
+    }
+
+    const userId = `${parts[1]}-${parts[2]}`; // e.g. usr-shopper-001 or usr-12345
+    const users = getUsers();
+    const user = users.find((u) => u.id === userId || token.includes(u.id));
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    const { password: _, ...userProfile } = user;
+    res.json({ success: true, data: userProfile });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Logout
+app.post('/api/auth/logout', (_req: Request, res: Response) => {
+  res.json({ success: true, message: 'Logged out successfully' });
+});
+
+// Update Sizing Profile
+app.put('/api/auth/profile/sizing', (req: Request, res: Response) => {
+  try {
+    const { userId, sizingProfile } = req.body;
+    if (!userId || !sizingProfile) {
+      return res.status(400).json({ success: false, error: 'userId and sizingProfile are required' });
+    }
+
+    const users = getUsers();
+    const userIndex = users.findIndex((u) => u.id === userId);
+    if (userIndex === -1) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    users[userIndex].sizingProfile = sizingProfile;
+    saveUsers(users);
+
+    const { password: _, ...userProfile } = users[userIndex];
+    res.json({ success: true, data: userProfile });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// --- PARTICIPANT QR & SESSION APIS ---
+
+// List all sessions
+app.get('/api/sessions', (_req: Request, res: Response) => {
+  const sessions = sessionDb.getAll();
+  const feedbacks = participantFeedbackDb.getAll();
+  const participants = participantDb.getAll();
+
+  const enriched = sessions.map((s) => ({
+    ...s,
+    totalParticipants: participants.filter((p) => p.sessionId === s.id).length,
+    totalSubmissions: feedbacks.filter((f) => f.sessionId === s.id).length,
+  }));
+
+  res.json({ success: true, data: enriched });
+});
+
+// Generate a new QR participant session
+app.post('/api/sessions/generate', (req: Request, res: Response) => {
+  try {
+    const { name, durationHours } = req.body;
+    const session = sessionDb.createSession(name || 'Hackathon Session', durationHours || 6);
+    res.status(201).json({ success: true, data: session });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Validate session token for scanning participants
+app.get('/api/sessions/:token', (req: Request, res: Response) => {
+  const result = sessionDb.getByToken(req.params.token);
+  if (!result.isValid) {
+    return res.status(200).json({
+      success: false,
+      isValid: false,
+      error: result.error || 'Invalid',
+      session: result.session,
+    });
+  }
+
+  res.json({
+    success: true,
+    isValid: true,
+    data: result.session,
+  });
+});
+
+// Update session status (active, paused, ended)
+app.patch('/api/sessions/:token/status', (req: Request, res: Response) => {
+  try {
+    const { status } = req.body as { status: SessionStatus };
+    if (!['active', 'paused', 'ended'].includes(status)) {
+      return res.status(400).json({ success: false, error: 'Invalid status' });
+    }
+
+    const updated = sessionDb.updateStatus(req.params.token, status);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: 'Session not found' });
+    }
+
+    res.json({ success: true, data: updated });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Session live participation stats
+app.get('/api/sessions/:token/stats', (req: Request, res: Response) => {
+  const check = sessionDb.getByToken(req.params.token);
+  if (!check.session) {
+    return res.status(404).json({ success: false, error: 'Session not found' });
+  }
+
+  const s = check.session;
+  const participants = participantDb.getAll().filter((p) => p.sessionId === s.id);
+  const feedbacks = participantFeedbackDb.getAll().filter((f) => f.sessionId === s.id);
+  const analyses = analysisDb.getAll().filter((a) => a.sessionId === s.id);
+
+  res.json({
+    success: true,
+    data: {
+      session: s,
+      activeParticipants: participants.length,
+      completedAnalyses: analyses.length,
+      totalSubmissions: feedbacks.length,
+    },
+  });
+});
+
+// --- PARTICIPANT MOBILE EXPERIENCE APIS ---
+
+// Step 2 & 3: Validate uploaded photo quality
+app.post('/api/participant/validate-photo', upload.single('photo'), (req: Request, res: Response) => {
+  try {
+    let fileInfo = {
+      size: 450 * 1024,
+      mimetype: 'image/jpeg',
+      originalname: 'demo-capture.jpg',
+    };
+
+    let imageUrl: string | undefined = undefined;
+
+    if (req.file) {
+      fileInfo = {
+        size: req.file.size,
+        mimetype: req.file.mimetype,
+        originalname: req.file.originalname,
+      };
+      imageUrl = `/uploads/${req.file.filename}`;
+    }
+
+    const report = validateImageQuality(fileInfo);
+
+    res.json({
+      success: true,
+      data: {
+        photoQuality: report,
+        imageUrl,
+      },
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Step 4, 5, 6: AI Body Proportions & Explainable Size Recommendation
+app.post('/api/participant/analyze-fit', (req: Request, res: Response) => {
+  try {
+    const {
+      sessionId,
+      height,
+      weight,
+      garmentType = 'Shirt',
+      fitPreference = 'Regular',
+      consentGiven = true,
+      photoQuality,
+      imageUrl,
+    } = req.body;
+
+    const safeHeight = Number(height) || 175;
+    const safeWeight = weight ? Number(weight) : undefined;
+
+    // 1. Create anonymous participant record
+    const participant = participantDb.insert({
+      sessionId,
+      height: safeHeight,
+      weight: safeWeight,
+      garmentType: garmentType as GarmentType,
+      fitPreference: fitPreference as FitPreference,
+      consentGiven: Boolean(consentGiven),
+    });
+
+    // 2. Estimate body proportions
+    const measurements = estimateBodyProportions(
+      safeHeight,
+      safeWeight,
+      garmentType as GarmentType,
+      fitPreference as FitPreference
+    );
+
+    // 3. Recommend size
+    const recommendation = recommendSize(
+      measurements,
+      safeHeight,
+      safeWeight,
+      garmentType as GarmentType,
+      fitPreference as FitPreference,
+      photoQuality
+    );
+
+    // 4. Save analysis
+    analysisDb.insert({
+      participantId: participant.id,
+      sessionId,
+      photoQuality: recommendation.photoQuality,
+      measurements,
+      recommendation,
+      imageUrl,
+    });
+
+    res.json({
+      success: true,
+      data: {
+        participantId: participant.id,
+        measurements,
+        recommendation,
+      },
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Step 7: Submit actual fit feedback & cross-evaluate recommendation accuracy
+app.post('/api/participant/feedback', async (req: Request, res: Response) => {
+  try {
+    const {
+      participantId,
+      sessionId,
+      garmentType = 'Shirt',
+      recommendedSize = 'M',
+      actualSize = 'M',
+      fitRating = 'Perfect',
+      problemAreas = [],
+      comment = '',
+    } = req.body;
+
+    const SIZES: Size[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+    const recIdx = SIZES.indexOf(recommendedSize as Size);
+    const actIdx = SIZES.indexOf(actualSize as Size);
+    const sizeDifference = recIdx !== -1 && actIdx !== -1 ? Math.abs(recIdx - actIdx) : 0;
+    const isCorrectSize = sizeDifference === 0;
+
+    // Natural Language Processing of participant text comments
+    const aiAnalysis = await analyzeFeedback(comment, {
+      garmentType: garmentType as GarmentType,
+      size: actualSize as Size,
+      rating: fitRating === 'Perfect' ? 5 : fitRating.includes('Slightly') ? 3 : 1,
+      structuredBodyAreas: (problemAreas as string[]).map((p) => ({
+        area: p as any,
+        issue: fitRating.includes('Tight') ? 'Too Tight' : fitRating.includes('Loose') ? 'Too Loose' : 'Fits Correctly',
+      })),
+    });
+
+    // Save to participant feedback collection
+    const participantFb = participantFeedbackDb.insert({
+      participantId: participantId || `part-${Date.now()}`,
+      sessionId,
+      garmentType: garmentType as GarmentType,
+      recommendedSize: recommendedSize as Size,
+      actualSize: actualSize as Size,
+      fitRating,
+      problemAreas: Array.isArray(problemAreas) ? problemAreas : [],
+      comment,
+      sentiment: aiAnalysis.sentiment,
+      severity: aiAnalysis.severity,
+      sizeDifference,
+      isCorrectSize,
+    });
+
+    // Also sync to master brand feedback DB so existing charts and heatmaps update in real-time
+    db.insert({
+      id: `fb-live-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      brand: 'Participant Live Test',
+      product: `${garmentType} (Crowd Fit)`,
+      garmentType: garmentType as GarmentType,
+      category: 'Participant Sizing',
+      size: actualSize as Size,
+      expectedSize: recommendedSize as Size,
+      fitPreference: 'Regular',
+      bodyAreas: (problemAreas as string[]).map((a) => ({
+        area: a as any,
+        issue: fitRating.includes('Tight') ? 'Too Tight' : fitRating.includes('Loose') ? 'Too Loose' : 'Other',
+      })),
+      overallRating: fitRating === 'Perfect' ? 5 : fitRating.includes('Slightly') ? 3 : 2,
+      comfortRating: fitRating === 'Perfect' ? 5 : 3,
+      sizeAccuracyRating: isCorrectSize ? 5 : 2,
+      comment: comment || `Tried size ${actualSize} (AI recommended ${recommendedSize}). Fit was ${fitRating.toLowerCase()}.`,
+      returnReason: fitRating === 'Perfect' ? 'No return' : 'Size issue',
+      aiAnalysis,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Participant fit feedback recorded and verified',
+      data: participantFb,
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// --- ORGANIZER ADMIN INTELLIGENCE APIS ---
+
+// Recommendation Accuracy and size difference metrics
+app.get('/api/admin/accuracy-metrics', (_req: Request, res: Response) => {
+  try {
+    const feedbacks = participantFeedbackDb.getAll();
+    const metrics = computeRecommendationAccuracy(feedbacks);
+    res.json({ success: true, data: metrics });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Dynamic Brand Insights derived from participant sizing feedback
+app.get('/api/admin/brand-insights', (_req: Request, res: Response) => {
+  try {
+    const feedbacks = participantFeedbackDb.getAll();
+    const insights = generateBrandInsightsFromData(feedbacks);
+    res.json({ success: true, data: insights });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Recent participant analyses stream for admin dashboard
+app.get('/api/admin/participants', (_req: Request, res: Response) => {
+  try {
+    const participants = participantDb.getAll();
+    const analyses = analysisDb.getAll();
+    const feedbacks = participantFeedbackDb.getAll();
+
+    const merged = participants.slice(0, 30).map((p) => {
+      const analysis = analyses.find((a) => a.participantId === p.id);
+      const feedback = feedbacks.find((f) => f.participantId === p.id);
+      return {
+        participant: p,
+        analysis,
+        feedback,
+      };
+    });
+
+    res.json({ success: true, data: merged });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }

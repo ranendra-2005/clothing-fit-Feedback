@@ -1,0 +1,421 @@
+[
+  {
+    "participantId": "part-1789277070664-236",
+    "sessionId": "SESS-ROUND1",
+    "photoQuality": {
+      "score": 85,
+      "isAcceptable": true,
+      "personDetected": true,
+      "singlePerson": true,
+      "lighting": "Good",
+      "blurScore": 21,
+      "bodyFraming": "Well-Centered",
+      "issues": [],
+      "suggestions": [
+        "Photo framing and clarity are excellent for fit analysis"
+      ]
+    },
+    "measurements": {
+      "shoulderWidthCm": 46.2,
+      "chestCircumferenceCm": 100,
+      "waistCircumferenceCm": 83.1,
+      "hipCircumferenceCm": 98.5,
+      "armLengthCm": 63.9,
+      "torsoLengthCm": 72.1,
+      "confidenceScore": 89,
+      "isApproximate": true
+    },
+    "recommendation": {
+      "recommendedSize": "M",
+      "confidence": 94,
+      "alternatives": [
+        {
+          "size": "S",
+          "description": "May feel snug across chest (100cm) and shoulders",
+          "fitLabel": "Closer Fit / Snug"
+        },
+        {
+          "size": "M",
+          "description": "Optimal anatomical balance based on your relaxed fit preference",
+          "fitLabel": "Best Overall Match"
+        },
+        {
+          "size": "L",
+          "description": "Provides roomier drape with +2cm chest and torso ease",
+          "fitLabel": "Relaxed / Layering"
+        }
+      ],
+      "fitBreakdown": {
+        "Shoulder": "Good Fit",
+        "Chest": "Good Fit",
+        "Waist": "Good Fit",
+        "Sleeve": "Good Fit",
+        "Length": "Good Fit",
+        "Overall": "Recommended Fit"
+      },
+      "explanation": "Your estimated shoulder (46.2 cm) and chest (100 cm) proportions align closest with the standard M size range for Shirts. Based on your selected relaxed-fit preference and height (175 cm), size M provides the best balance of comfort, range of motion, and silhouette drape.",
+      "isDemoAnalysis": true,
+      "measurements": {
+        "shoulderWidthCm": 46.2,
+        "chestCircumferenceCm": 100,
+        "waistCircumferenceCm": 83.1,
+        "hipCircumferenceCm": 98.5,
+        "armLengthCm": 63.9,
+        "torsoLengthCm": 72.1,
+        "confidenceScore": 89,
+        "isApproximate": true
+      },
+      "photoQuality": {
+        "score": 85,
+        "isAcceptable": true,
+        "personDetected": true,
+        "singlePerson": true,
+        "lighting": "Good",
+        "blurScore": 21,
+        "bodyFraming": "Well-Centered",
+        "issues": [],
+        "suggestions": [
+          "Photo framing and clarity are excellent for fit analysis"
+        ]
+      }
+    },
+    "imageUrl": "blob:https://6273ca0597be28.lhr.life/d9b60046-ae93-462f-90de-8004687ffa9d",
+    "id": "ana-1789277070665-505",
+    "createdAt": "2026-09-13T05:24:30.665Z"
+  },
+  {
+    "participantId": "part-1789277058901-847",
+    "sessionId": "SESS-ROUND1",
+    "photoQuality": {
+      "score": 85,
+      "isAcceptable": true,
+      "personDetected": true,
+      "singlePerson": true,
+      "lighting": "Good",
+      "blurScore": 23,
+      "bodyFraming": "Well-Centered",
+      "issues": [],
+      "suggestions": [
+        "Photo framing and clarity are excellent for fit analysis"
+      ]
+    },
+    "measurements": {
+      "shoulderWidthCm": 46.2,
+      "chestCircumferenceCm": 100,
+      "waistCircumferenceCm": 83.1,
+      "hipCircumferenceCm": 98.5,
+      "armLengthCm": 63.9,
+      "torsoLengthCm": 72.1,
+      "confidenceScore": 89,
+      "isApproximate": true
+    },
+    "recommendation": {
+      "recommendedSize": "M",
+      "confidence": 94,
+      "alternatives": [
+        {
+          "size": "S",
+          "description": "May feel snug across chest (100cm) and shoulders",
+          "fitLabel": "Closer Fit / Snug"
+        },
+        {
+          "size": "M",
+          "description": "Optimal anatomical balance based on your regular fit preference",
+          "fitLabel": "Best Overall Match"
+        },
+        {
+          "size": "L",
+          "description": "Provides roomier drape with +2cm chest and torso ease",
+          "fitLabel": "Relaxed / Layering"
+        }
+      ],
+      "fitBreakdown": {
+        "Shoulder": "Good Fit",
+        "Chest": "Good Fit",
+        "Waist": "Good Fit",
+        "Sleeve": "Good Fit",
+        "Length": "Good Fit",
+        "Overall": "Recommended Fit"
+      },
+      "explanation": "Your estimated shoulder (46.2 cm) and chest (100 cm) proportions align closest with the standard M size range for Shirts. Based on your selected regular-fit preference and height (175 cm), size M provides the best balance of comfort, range of motion, and silhouette drape.",
+      "isDemoAnalysis": true,
+      "measurements": {
+        "shoulderWidthCm": 46.2,
+        "chestCircumferenceCm": 100,
+        "waistCircumferenceCm": 83.1,
+        "hipCircumferenceCm": 98.5,
+        "armLengthCm": 63.9,
+        "torsoLengthCm": 72.1,
+        "confidenceScore": 89,
+        "isApproximate": true
+      },
+      "photoQuality": {
+        "score": 85,
+        "isAcceptable": true,
+        "personDetected": true,
+        "singlePerson": true,
+        "lighting": "Good",
+        "blurScore": 23,
+        "bodyFraming": "Well-Centered",
+        "issues": [],
+        "suggestions": [
+          "Photo framing and clarity are excellent for fit analysis"
+        ]
+      }
+    },
+    "imageUrl": "blob:https://6273ca0597be28.lhr.life/288a21d9-59cc-4c6b-8769-99e4cd495f8d",
+    "id": "ana-1789277058905-957",
+    "createdAt": "2026-09-13T05:24:18.905Z"
+  },
+  {
+    "participantId": "part-1789277011351-835",
+    "sessionId": "SESS-ROUND1",
+    "photoQuality": {
+      "score": 85,
+      "isAcceptable": true,
+      "personDetected": true,
+      "singlePerson": true,
+      "lighting": "Good",
+      "blurScore": 17,
+      "bodyFraming": "Well-Centered",
+      "issues": [],
+      "suggestions": [
+        "Photo framing and clarity are excellent for fit analysis"
+      ]
+    },
+    "measurements": {
+      "shoulderWidthCm": 46.2,
+      "chestCircumferenceCm": 100,
+      "waistCircumferenceCm": 83.1,
+      "hipCircumferenceCm": 98.5,
+      "armLengthCm": 63.9,
+      "torsoLengthCm": 72.1,
+      "confidenceScore": 89,
+      "isApproximate": true
+    },
+    "recommendation": {
+      "recommendedSize": "M",
+      "confidence": 94,
+      "alternatives": [
+        {
+          "size": "S",
+          "description": "May feel snug across chest (100cm) and shoulders",
+          "fitLabel": "Closer Fit / Snug"
+        },
+        {
+          "size": "M",
+          "description": "Optimal anatomical balance based on your regular fit preference",
+          "fitLabel": "Best Overall Match"
+        },
+        {
+          "size": "L",
+          "description": "Provides roomier drape with +2cm chest and torso ease",
+          "fitLabel": "Relaxed / Layering"
+        }
+      ],
+      "fitBreakdown": {
+        "Shoulder": "Good Fit",
+        "Chest": "Good Fit",
+        "Waist": "Good Fit",
+        "Sleeve": "Good Fit",
+        "Length": "Good Fit",
+        "Overall": "Recommended Fit"
+      },
+      "explanation": "Your estimated shoulder (46.2 cm) and chest (100 cm) proportions align closest with the standard M size range for Shirts. Based on your selected regular-fit preference and height (175 cm), size M provides the best balance of comfort, range of motion, and silhouette drape.",
+      "isDemoAnalysis": true,
+      "measurements": {
+        "shoulderWidthCm": 46.2,
+        "chestCircumferenceCm": 100,
+        "waistCircumferenceCm": 83.1,
+        "hipCircumferenceCm": 98.5,
+        "armLengthCm": 63.9,
+        "torsoLengthCm": 72.1,
+        "confidenceScore": 89,
+        "isApproximate": true
+      },
+      "photoQuality": {
+        "score": 85,
+        "isAcceptable": true,
+        "personDetected": true,
+        "singlePerson": true,
+        "lighting": "Good",
+        "blurScore": 17,
+        "bodyFraming": "Well-Centered",
+        "issues": [],
+        "suggestions": [
+          "Photo framing and clarity are excellent for fit analysis"
+        ]
+      }
+    },
+    "imageUrl": "blob:https://6273ca0597be28.lhr.life/6601bc97-6584-429f-9403-86f8abf9d59c",
+    "id": "ana-1789277011353-344",
+    "createdAt": "2026-09-13T05:23:31.353Z"
+  },
+  {
+    "participantId": "part-1789276792864-370",
+    "sessionId": "SESS-ROUND1",
+    "photoQuality": {
+      "score": 85,
+      "isAcceptable": true,
+      "personDetected": true,
+      "singlePerson": true,
+      "lighting": "Good",
+      "blurScore": 34,
+      "bodyFraming": "Well-Centered",
+      "issues": [],
+      "suggestions": [
+        "Photo framing and clarity are excellent for fit analysis"
+      ]
+    },
+    "measurements": {
+      "shoulderWidthCm": 47.8,
+      "chestCircumferenceCm": 100.1,
+      "waistCircumferenceCm": 81.9,
+      "hipCircumferenceCm": 99.4,
+      "armLengthCm": 68.3,
+      "torsoLengthCm": 77,
+      "confidenceScore": 89,
+      "isApproximate": true
+    },
+    "recommendation": {
+      "recommendedSize": "M",
+      "confidence": 90,
+      "alternatives": [
+        {
+          "size": "S",
+          "description": "May feel snug across chest (100.1cm) and shoulders",
+          "fitLabel": "Closer Fit / Snug"
+        },
+        {
+          "size": "M",
+          "description": "Optimal anatomical balance based on your regular fit preference",
+          "fitLabel": "Best Overall Match"
+        },
+        {
+          "size": "L",
+          "description": "Provides roomier drape with +2cm chest and torso ease",
+          "fitLabel": "Relaxed / Layering"
+        }
+      ],
+      "fitBreakdown": {
+        "Shoulder": "Slightly Tight",
+        "Chest": "Good Fit",
+        "Waist": "Good Fit",
+        "Sleeve": "Good Fit",
+        "Length": "Good Fit",
+        "Overall": "Recommended Fit"
+      },
+      "explanation": "Your estimated shoulder (47.8 cm) and chest (100.1 cm) proportions align closest with the standard M size range for Shirts. Based on your selected regular-fit preference and height (187 cm), size M provides the best balance of comfort, range of motion, and silhouette drape.",
+      "isDemoAnalysis": true,
+      "measurements": {
+        "shoulderWidthCm": 47.8,
+        "chestCircumferenceCm": 100.1,
+        "waistCircumferenceCm": 81.9,
+        "hipCircumferenceCm": 99.4,
+        "armLengthCm": 68.3,
+        "torsoLengthCm": 77,
+        "confidenceScore": 89,
+        "isApproximate": true
+      },
+      "photoQuality": {
+        "score": 85,
+        "isAcceptable": true,
+        "personDetected": true,
+        "singlePerson": true,
+        "lighting": "Good",
+        "blurScore": 34,
+        "bodyFraming": "Well-Centered",
+        "issues": [],
+        "suggestions": [
+          "Photo framing and clarity are excellent for fit analysis"
+        ]
+      }
+    },
+    "imageUrl": "blob:https://6273ca0597be28.lhr.life/82dd0dba-1159-45ec-b31e-6d175fad36a9",
+    "id": "ana-1789276792865-422",
+    "createdAt": "2026-09-13T05:19:52.865Z"
+  },
+  {
+    "participantId": "part-1789275948628-748",
+    "sessionId": "SESS-ROUND1",
+    "photoQuality": {
+      "score": 85,
+      "isAcceptable": true,
+      "personDetected": true,
+      "singlePerson": true,
+      "lighting": "Good",
+      "blurScore": 18,
+      "bodyFraming": "Well-Centered",
+      "issues": [],
+      "suggestions": [
+        "High quality photo validation"
+      ]
+    },
+    "measurements": {
+      "shoulderWidthCm": 46.4,
+      "chestCircumferenceCm": 99.3,
+      "waistCircumferenceCm": 82.1,
+      "hipCircumferenceCm": 98.1,
+      "armLengthCm": 65,
+      "torsoLengthCm": 73.3,
+      "confidenceScore": 92,
+      "isApproximate": true
+    },
+    "recommendation": {
+      "recommendedSize": "M",
+      "confidence": 94,
+      "alternatives": [
+        {
+          "size": "S",
+          "description": "May feel snug across chest (99.3cm) and shoulders",
+          "fitLabel": "Closer Fit / Snug"
+        },
+        {
+          "size": "M",
+          "description": "Optimal anatomical balance based on your regular fit preference",
+          "fitLabel": "Best Overall Match"
+        },
+        {
+          "size": "L",
+          "description": "Provides roomier drape with +2cm chest and torso ease",
+          "fitLabel": "Relaxed / Layering"
+        }
+      ],
+      "fitBreakdown": {
+        "Shoulder": "Good Fit",
+        "Chest": "Good Fit",
+        "Waist": "Good Fit",
+        "Sleeve": "Good Fit",
+        "Length": "Good Fit",
+        "Overall": "Recommended Fit"
+      },
+      "explanation": "Your estimated shoulder (46.4 cm) and chest (99.3 cm) proportions align closest with the standard M size range for Shirts. Based on your selected regular-fit preference and height (178 cm), size M provides the best balance of comfort, range of motion, and silhouette drape.",
+      "isDemoAnalysis": true,
+      "measurements": {
+        "shoulderWidthCm": 46.4,
+        "chestCircumferenceCm": 99.3,
+        "waistCircumferenceCm": 82.1,
+        "hipCircumferenceCm": 98.1,
+        "armLengthCm": 65,
+        "torsoLengthCm": 73.3,
+        "confidenceScore": 92,
+        "isApproximate": true
+      },
+      "photoQuality": {
+        "score": 85,
+        "isAcceptable": true,
+        "personDetected": true,
+        "singlePerson": true,
+        "lighting": "Good",
+        "blurScore": 18,
+        "bodyFraming": "Well-Centered",
+        "issues": [],
+        "suggestions": [
+          "High quality photo validation"
+        ]
+      }
+    },
+    "id": "ana-1789275948629-788",
+    "createdAt": "2026-09-13T05:05:48.629Z"
+  }
+]

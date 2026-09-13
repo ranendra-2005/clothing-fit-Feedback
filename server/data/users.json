@@ -1,0 +1,39 @@
+[
+  {
+    "id": "usr-shopper-001",
+    "name": "Alex Shopper",
+    "email": "alex.shopper@fitpulse.ai",
+    "password": "password123",
+    "role": "shopper",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+    "sizingProfile": {
+      "gender": "Men",
+      "heightCm": 176,
+      "weightKg": 72,
+      "recommendedSize": "M",
+      "chestCm": 98.0,
+      "shoulderCm": 46.5,
+      "waistCm": 82.0
+    },
+    "createdAt": "2026-09-12T10:00:00.000Z"
+  },
+  {
+    "id": "usr-designer-001",
+    "name": "Sarah Chen",
+    "email": "sarah.designer@fitpulse.ai",
+    "password": "password123",
+    "role": "designer",
+    "brand": "Apex Wear",
+    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80",
+    "createdAt": "2026-09-12T10:00:00.000Z"
+  },
+  {
+    "id": "usr-admin-001",
+    "name": "Admin Director",
+    "email": "admin@fitpulse.ai",
+    "password": "password123",
+    "role": "admin",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+    "createdAt": "2026-09-12T10:00:00.000Z"
+  }
+]

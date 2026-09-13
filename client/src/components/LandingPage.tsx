@@ -11,11 +11,13 @@ import {
   CheckCircle2,
   Users,
   ShieldCheck,
+  QrCode,
+  Camera,
 } from 'lucide-react';
 import { AnalyticsMetrics } from '../types';
 
 interface LandingPageProps {
-  onNavigate: (view: 'landing' | 'feedback' | 'dashboard' | 'presentation') => void;
+  onNavigate: (view: any) => void;
   metrics: AnalyticsMetrics | null;
 }
 
@@ -23,57 +25,70 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate, metrics })
   return (
     <div className="relative overflow-hidden py-10 sm:py-16">
       {/* Background glow effects */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-pink-600/20 via-rose-500/10 to-indigo-600/20 blur-[120px] pointer-events-none -z-10 rounded-full" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-pink-500/15 via-rose-500/10 to-indigo-500/15 blur-3xl pointer-events-none rounded-full" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Track Badge */}
-        <div className="flex justify-center mb-6">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-pink-500/30 text-pink-300 text-xs font-medium shadow-inner">
-            <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
-            <span>Hackathon Track: Fashion for People</span>
-            <span className="text-slate-500">•</span>
-            <span className="text-slate-400">End-to-End Working MVP</span>
-          </div>
-        </div>
-
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Hero Section */}
-        <div className="text-center max-w-4xl mx-auto space-y-6">
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight">
-            Turn Clothing Fit Feedback{' '}
-            <span className="bg-gradient-to-r from-pink-400 via-rose-300 to-indigo-400 bg-clip-text text-transparent">
-              Into Better Fashion.
+        <div className="text-center max-w-3xl mx-auto space-y-6">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 shadow-inner">
+            <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
+            <span className="text-xs font-semibold text-slate-300">
+              Live Fashion Intelligence & Real-Time Optical Sizing
             </span>
+          </div>
+
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white leading-tight">
+            Stop Guessing Your Size.{' '}
+            <span className="bg-gradient-to-r from-pink-400 via-rose-400 to-indigo-400 bg-clip-text text-transparent">
+              AI Body Scanner
+            </span>{' '}
+            for Clothing.
           </h1>
 
-          <p className="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            An intelligent feedback and analytics platform that transforms customer fit experiences
-            into actionable insights for brands and designers.
+          <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto">
+            Stand in front of your camera for 3 seconds. FitPulse scans your shoulder, chest, and torso contours to reveal your exact clothing size across every brand.
           </p>
 
           {/* Primary CTA Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+          <div className="flex flex-wrap items-center justify-center gap-3.5 pt-4">
             <button
-              onClick={() => onNavigate('feedback')}
-              className="flex items-center space-x-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 text-white font-semibold text-base shadow-lg shadow-pink-500/30 hover:shadow-pink-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              onClick={() => onNavigate('scanner')}
+              className="flex items-center space-x-2.5 px-7 py-4 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-indigo-600 text-white font-extrabold text-base shadow-xl shadow-pink-500/30 hover:shadow-pink-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
-              <span>Give Feedback</span>
+              <Camera className="w-5 h-5 animate-pulse" />
+              <span>Launch AI Body Scanner</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
             <button
-              onClick={() => onNavigate('dashboard')}
-              className="flex items-center space-x-2 px-7 py-3.5 rounded-xl bg-slate-900 text-white font-semibold text-base border border-slate-700/80 hover:bg-slate-800 hover:border-indigo-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              onClick={() => onNavigate('participant')}
+              className="flex items-center space-x-2 px-6 py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm border border-slate-700/80 hover:bg-slate-800 hover:scale-[1.01] transition-all"
             >
-              <BarChart3 className="w-4 h-4 text-indigo-400" />
-              <span>View Brand Insights</span>
+              <Sparkles className="w-4 h-4 text-pink-400" />
+              <span>Mobile QR Wizard</span>
+            </button>
+
+            <button
+              onClick={() => onNavigate('admin')}
+              className="flex items-center space-x-2 px-5 py-4 rounded-2xl bg-indigo-600/20 border border-indigo-500/40 text-indigo-300 font-bold text-sm hover:bg-indigo-600/30 transition-all"
+            >
+              <QrCode className="w-4 h-4 text-indigo-400" />
+              <span>Organizer Admin</span>
+            </button>
+
+            <button
+              onClick={() => onNavigate('dashboard')}
+              className="flex items-center space-x-2 px-5 py-3.5 rounded-xl bg-slate-900 text-slate-200 font-semibold text-sm border border-slate-700/80 hover:bg-slate-800 hover:border-slate-600 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            >
+              <BarChart3 className="w-4 h-4 text-slate-400" />
+              <span>Brand Heatmap</span>
             </button>
 
             <button
               onClick={() => onNavigate('presentation')}
-              className="flex items-center space-x-2 px-5 py-3.5 rounded-xl bg-indigo-950/40 text-indigo-300 font-medium text-base border border-indigo-500/30 hover:bg-indigo-900/30 transition-all"
+              className="flex items-center space-x-2 px-5 py-3.5 rounded-xl bg-slate-950 text-slate-400 font-medium text-sm border border-slate-800 hover:text-white hover:bg-slate-900 transition-all"
             >
-              <Sparkles className="w-4 h-4 text-indigo-400" />
-              <span>Judge Presentation Mode</span>
+              <span>Judge Deck</span>
             </button>
           </div>
         </div>

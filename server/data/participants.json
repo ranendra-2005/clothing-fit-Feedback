@@ -1,0 +1,52 @@
+[
+  {
+    "sessionId": "SESS-ROUND1",
+    "height": 175,
+    "weight": 72,
+    "garmentType": "Shirt",
+    "fitPreference": "Relaxed",
+    "consentGiven": true,
+    "id": "part-1789277070664-236",
+    "createdAt": "2026-09-13T05:24:30.664Z"
+  },
+  {
+    "sessionId": "SESS-ROUND1",
+    "height": 175,
+    "weight": 72,
+    "garmentType": "Shirt",
+    "fitPreference": "Regular",
+    "consentGiven": true,
+    "id": "part-1789277058901-847",
+    "createdAt": "2026-09-13T05:24:18.901Z"
+  },
+  {
+    "sessionId": "SESS-ROUND1",
+    "height": 175,
+    "weight": 72,
+    "garmentType": "Shirt",
+    "fitPreference": "Regular",
+    "consentGiven": true,
+    "id": "part-1789277011351-835",
+    "createdAt": "2026-09-13T05:23:31.351Z"
+  },
+  {
+    "sessionId": "SESS-ROUND1",
+    "height": 187,
+    "weight": 75,
+    "garmentType": "Shirt",
+    "fitPreference": "Regular",
+    "consentGiven": true,
+    "id": "part-1789276792864-370",
+    "createdAt": "2026-09-13T05:19:52.864Z"
+  },
+  {
+    "sessionId": "SESS-ROUND1",
+    "height": 178,
+    "weight": 72,
+    "garmentType": "Shirt",
+    "fitPreference": "Regular",
+    "consentGiven": true,
+    "id": "part-1789275948628-748",
+    "createdAt": "2026-09-13T05:05:48.628Z"
+  }
+]

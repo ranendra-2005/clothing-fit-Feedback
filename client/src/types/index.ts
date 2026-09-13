@@ -180,3 +180,132 @@ export interface FilterState {
   startDate: string;
   endDate: string;
 }
+
+// --- PARTICIPANT QR & SYSTEM TYPES ---
+
+export type SessionStatus = 'active' | 'paused' | 'ended';
+
+export interface Session {
+  id: string;
+  token: string;
+  name: string;
+  status: SessionStatus;
+  createdAt: string;
+  expiresAt: string;
+  totalParticipants?: number;
+  totalSubmissions?: number;
+}
+
+export interface Participant {
+  id: string;
+  sessionId?: string;
+  height: number;
+  weight?: number;
+  garmentType: GarmentType;
+  fitPreference: FitPreference;
+  consentGiven: boolean;
+  createdAt: string;
+}
+
+export interface PhotoQualityReport {
+  score: number; // 0 - 100
+  isAcceptable: boolean;
+  personDetected: boolean;
+  singlePerson: boolean;
+  lighting: 'Good' | 'Fair' | 'Poor';
+  blurScore: number;
+  bodyFraming: 'Well-Centered' | 'Too Close' | 'Partial Body' | 'Obstructed';
+  issues: string[];
+  suggestions: string[];
+}
+
+export interface BodyProportions {
+  shoulderWidthCm: number;
+  chestCircumferenceCm: number;
+  waistCircumferenceCm: number;
+  hipCircumferenceCm: number;
+  armLengthCm: number;
+  torsoLengthCm: number;
+  confidenceScore: number;
+  isApproximate: boolean;
+}
+
+export interface SizeAlternative {
+  size: Size;
+  description: string;
+  fitLabel: string;
+}
+
+export interface SizeRecommendationResult {
+  recommendedSize: Size;
+  confidence: number;
+  alternatives: SizeAlternative[];
+  fitBreakdown: Record<string, string>;
+  explanation: string;
+  isDemoAnalysis: boolean;
+  measurements: BodyProportions;
+  photoQuality: PhotoQualityReport;
+}
+
+export interface ParticipantFeedback {
+  id: string;
+  participantId: string;
+  sessionId?: string;
+  garmentType: GarmentType;
+  recommendedSize: Size;
+  actualSize: Size;
+  fitRating: 'Too Tight' | 'Slightly Tight' | 'Perfect' | 'Slightly Loose' | 'Too Loose';
+  problemAreas: string[];
+  comment?: string;
+  sentiment?: Sentiment;
+  severity?: Severity;
+  sizeDifference: number;
+  isCorrectSize: boolean;
+  createdAt: string;
+}
+
+export interface RecommendationAccuracyMetrics {
+  totalEvaluated: number;
+  exactMatches: number;
+  accuracyRate: number;
+  avgSizeDifference: number;
+  oneSizeDifferenceRate: number;
+  twoPlusSizeDifferenceRate: number;
+  sizeDistributionRecommended: { size: string; count: number; percentage: number }[];
+  sizeDistributionActual: { size: string; count: number; percentage: number }[];
+  fitSatisfactionBreakdown: { rating: string; count: number; percentage: number }[];
+  problemAreaFrequency: { area: string; count: number; percentage: number }[];
+}
+
+export interface BrandInsightItem {
+  id: string;
+  insight: string;
+  evidence: string;
+  recommendation: string;
+  severity: Severity;
+  affectedMetric: string;
+  createdAt: string;
+}
+
+export type UserRole = 'shopper' | 'designer' | 'admin';
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  brand?: string;
+  avatar?: string;
+  sizingProfile?: {
+    gender?: 'Men' | 'Women';
+    heightCm?: number;
+    weightKg?: number;
+    recommendedSize?: Size;
+    chestCm?: number;
+    shoulderCm?: number;
+    waistCm?: number;
+  };
+  createdAt: string;
+}
+
+

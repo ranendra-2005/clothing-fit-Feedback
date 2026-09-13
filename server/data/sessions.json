@@ -1,0 +1,34 @@
+[
+  {
+    "id": "sess-1789278545912",
+    "token": "SESS-L253M",
+    "name": "Round 1 Demo (11:19 am)",
+    "status": "active",
+    "createdAt": "2026-09-13T05:49:05.912Z",
+    "expiresAt": "2026-09-13T13:49:05.912Z"
+  },
+  {
+    "id": "sess-1789278544587",
+    "token": "SESS-HRA8O",
+    "name": "Round 1 Demo (11:19 am)",
+    "status": "active",
+    "createdAt": "2026-09-13T05:49:04.587Z",
+    "expiresAt": "2026-09-13T13:49:04.587Z"
+  },
+  {
+    "id": "sess-1789278540364",
+    "token": "SESS-SBW3K",
+    "name": "Round 1 Demo (11:19 am)",
+    "status": "active",
+    "createdAt": "2026-09-13T05:49:00.364Z",
+    "expiresAt": "2026-09-13T13:49:00.364Z"
+  },
+  {
+    "id": "sess-default-1",
+    "token": "SESS-ROUND1",
+    "name": "Hackathon Round 1 Live Session",
+    "status": "active",
+    "createdAt": "2026-09-13T04:59:35.294Z",
+    "expiresAt": "2026-09-13T12:59:35.295Z"
+  }
+]

@@ -1,0 +1,102 @@
+[
+  {
+    "participantId": "part-1789277070664-236",
+    "sessionId": "SESS-ROUND1",
+    "garmentType": "Shirt",
+    "recommendedSize": "M",
+    "actualSize": "XL",
+    "fitRating": "Perfect",
+    "problemAreas": [],
+    "comment": "",
+    "sentiment": "Positive",
+    "severity": "Low",
+    "sizeDifference": 2,
+    "isCorrectSize": false,
+    "id": "pf-1789277100163-611",
+    "createdAt": "2026-09-13T05:25:00.163Z"
+  },
+  {
+    "participantId": "part-live-test",
+    "sessionId": "SESS-ROUND1",
+    "garmentType": "Shirt",
+    "recommendedSize": "M",
+    "actualSize": "M",
+    "fitRating": "Perfect",
+    "problemAreas": [],
+    "comment": "Fits beautifully across chest and deltoids!",
+    "sentiment": "Positive",
+    "severity": "Low",
+    "sizeDifference": 0,
+    "isCorrectSize": true,
+    "id": "pf-1789275957012-512",
+    "createdAt": "2026-09-13T05:05:57.012Z"
+  },
+  {
+    "id": "pf-1",
+    "participantId": "part-demo-1",
+    "sessionId": "sess-default-1",
+    "garmentType": "Shirt",
+    "recommendedSize": "M",
+    "actualSize": "M",
+    "fitRating": "Perfect",
+    "problemAreas": [],
+    "comment": "Shoulders and chest fit remarkably well. Loved the fit recommendation!",
+    "sentiment": "Positive",
+    "severity": "Low",
+    "sizeDifference": 0,
+    "isCorrectSize": true,
+    "createdAt": "2026-09-13T03:59:35.297Z"
+  },
+  {
+    "id": "pf-2",
+    "participantId": "part-demo-2",
+    "sessionId": "sess-default-1",
+    "garmentType": "Shirt",
+    "recommendedSize": "M",
+    "actualSize": "L",
+    "fitRating": "Slightly Tight",
+    "problemAreas": [
+      "Shoulder"
+    ],
+    "comment": "The shoulders were slightly snug in M, had to take L for athletic broad shoulders.",
+    "sentiment": "Neutral",
+    "severity": "Medium",
+    "sizeDifference": 1,
+    "isCorrectSize": false,
+    "createdAt": "2026-09-13T02:59:35.297Z"
+  },
+  {
+    "id": "pf-3",
+    "participantId": "part-demo-3",
+    "sessionId": "sess-default-1",
+    "garmentType": "T-Shirt",
+    "recommendedSize": "L",
+    "actualSize": "L",
+    "fitRating": "Perfect",
+    "problemAreas": [],
+    "comment": "Great oversized look, exactly as explained by the AI.",
+    "sentiment": "Positive",
+    "severity": "Low",
+    "sizeDifference": 0,
+    "isCorrectSize": true,
+    "createdAt": "2026-09-13T01:59:35.297Z"
+  },
+  {
+    "id": "pf-4",
+    "participantId": "part-demo-4",
+    "sessionId": "sess-default-1",
+    "garmentType": "Jeans",
+    "recommendedSize": "M",
+    "actualSize": "M",
+    "fitRating": "Slightly Loose",
+    "problemAreas": [
+      "Waist"
+    ],
+    "comment": "Waist has slight gap when sitting, but thigh and length are spot on.",
+    "sentiment": "Neutral",
+    "severity": "Low",
+    "sizeDifference": 0,
+    "isCorrectSize": true,
+    "createdAt": "2026-09-13T00:59:35.297Z"
+  }
+]
